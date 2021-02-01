@@ -6,10 +6,6 @@
 # description: this Vagrantfile creates a cluster with masters and workers
 #
 # dependencies: 
-# https://raw.githubusercontent.com/olealgoritme/kubernetes-ha-cluster/master/scripts/common.sh
-# https://raw.githubusercontent.com/olealgoritme/kubernetes-ha-cluster/master/scripts/scaler.sh
-# https://raw.githubusercontent.com/olealgoritme/kubernetes-ha-cluster/master/scripts/master.sh
-# https://raw.githubusercontent.com/olealgoritme/kubernetes-ha-cluster/master/scripts/worker.sh
 #
 # author: Ole Algoritme (C) 2020
 BOX_IMAGE = "generic/ubuntu2004"
@@ -38,10 +34,10 @@ POD_CIDR = "172.18.0.0/16"
 
 OA_MSG = "Kubernetes HA Cluster"
 
-COMMON_SCRIPT = "/scripts/common.sh"
-SCALER_SCRIPT = "/scripts/scaler.sh"
-MASTER_SCRIPT = "/scripts/master.sh"
-WORKER_SCRIPT = "/scripts/worker.sh"
+COMMON_SCRIPT = "https://raw.githubusercontent.com/olealgoritme/kubernetes-ha-cluster/master/scripts/common.sh"
+SCALER_SCRIPT = "https://raw.githubusercontent.com/olealgoritme/kubernetes-ha-cluster/master/scripts/scaler.sh"
+MASTER_SCRIPT = "https://raw.githubusercontent.com/olealgoritme/kubernetes-ha-cluster/master/scripts/master.sh"
+WORKER_SCRIPT = "https://raw.githubusercontent.com/olealgoritme/kubernetes-ha-cluster/master/scripts/worker.sh"
 
 class KubeCluster
 
@@ -94,7 +90,10 @@ class KubeCluster
         $script = <<-SCRIPT
           echo "# Added by OA" > shared/hosts.out
           echo "#{scalerIp} kv-scaler.lab.local kv-scaler.local kv-master" >> shared/hosts.out
-          #{SCALER_SCRIPT} "#{OA_MSG}" #{scalerIp} "#{masterIps}"
+          mkdir -p /home/vagrant/scripts
+          wget -q #{SCALER_SCRIPT} -O /home/vagrant/scripts/scaler.sh
+          chmod +x /home/vagrant/scripts/scaler.sh
+          /home/vagrant/scripts/scaler.sh "#{OA_MSG}" #{scalerIp} "#{masterIps}"
         SCRIPT
         scaler.vm.provision "shell", inline: $script
       end
@@ -127,8 +126,10 @@ class KubeCluster
         end
 
         $script = $script + <<-SCRIPT
-
-          #${MASTER_SCRIPT} "#{OA_MSG}" #{i} #{POD_CIDR} #{masterIp} #{MASTER_COUNT == 1 ? "single" : "multi"}
+          mkdir -p /home/vagrant/scripts
+          wget -q #{MASTER_SCRIPT} -O /home/vagrant/scripts/master.sh
+          chmod +x /home/vagrant/scripts/master.sh
+          /home/vagrant/scripts/master.sh "#{OA_MSG}" #{i} #{POD_CIDR} #{masterIp} #{MASTER_COUNT == 1 ? "single" : "multi"}
         SCRIPT
         master.vm.provision "shell", inline: $script
       end
@@ -152,8 +153,13 @@ class KubeCluster
         end
   
         $script = <<-SCRIPT
-          #{COMMON_SCRIPT} "#{OA_MSG}" #{BOX_IMAGE}
-          #{WORKER_SCRIPT} "#{OA_MSG}" #{i} #{workerIp} #{MASTER_COUNT == 1 ? "single" : "multi"}
+          mkdir -p /home/vagrant/scripts
+          wget -q #{COMMON_SCRIPT} -O /home/vagrant/scripts/common.sh
+          wget -q #{WORKER_SCRIPT} -O /home/vagrant/scripts/worker.sh
+          chmod +x /home/vagrant/scripts/common.sh
+          chmod +x /home/vagrant/scripts/worker.sh
+          /home/vagrant/scripts/common.sh "#{OA_MSG}" #{BOX_IMAGE}
+          /home/vagrant/scripts/worker.sh "#{OA_MSG}" #{i} #{workerIp} #{MASTER_COUNT == 1 ? "single" : "multi"}
         SCRIPT
         worker.vm.provision "shell", inline: $script
       end
