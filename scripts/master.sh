@@ -13,7 +13,7 @@ sed "s+192.168.0.0/16+$POD_CIDR+g" /tmp/calico-default.yaml > /tmp/calico-define
 
 if [ $MASTER_TYPE = "single" ]; then
 
-    kubeadm init --pod-network-cidr $POD_CIDR --apiserver-advertise-address $MASTER_IP --apiserver-cert-extra-sans kv-master.lab.local --apiserver-cert-extra-sans kv-scaler.lab.local | tee /vagrant/kubeadm-init.out
+    kubeadm init --pod-network-cidr $POD_CIDR --apiserver-advertise-address $MASTER_IP --apiserver-cert-extra-sans oa-master.lab.local --apiserver-cert-extra-sans kv-scaler.lab.local | tee /vagrant/kubeadm-init.out
 
     k=$(grep -n "kubeadm join $MASTER_IP" /vagrant/kubeadm-init.out | cut -f1 -d:)
     x=$(echo $k | awk '{print $1}')
@@ -25,9 +25,9 @@ else
 
         ip route del default
         ip route add default via $MASTER_IP
-        kubeadm init --control-plane-endpoint "kv-scaler.lab.local:6443" --upload-certs --pod-network-cidr $POD_CIDR --apiserver-cert-extra-sans kv-master.lab.local | tee /vagrant/kubeadm-init.out
+        kubeadm init --control-plane-endpoint "oa-scaler.lab.local:6443" --upload-certs --pod-network-cidr $POD_CIDR --apiserver-cert-extra-sans kv-master.lab.local | tee /vagrant/kubeadm-init.out
 
-        k=$(grep -n "kubeadm join kv-scaler.lab.local" /vagrant/kubeadm-init.out | cut -f1 -d:)
+        k=$(grep -n "kubeadm join oa-scaler.lab.local" /vagrant/kubeadm-init.out | cut -f1 -d:)
         x=$(echo $k | awk '{print $1}')
         awk -v ln=$x 'NR>=ln && NR<=ln+2' /vagrant/kubeadm-init.out | tee /vagrant/masters-join.out
         awk -v ln=$x 'NR>=ln && NR<=ln+1' /vagrant/kubeadm-init.out | tee /vagrant/workers-join.out

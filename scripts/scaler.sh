@@ -44,7 +44,7 @@ global
 
         ssl-default-bind-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
 
-frontend kv-scaler
+frontend oa-scaler
         bind *:6443
         mode tcp
         log global
@@ -52,9 +52,9 @@ frontend kv-scaler
         timeout client 3600s
         backlog 4096
         maxconn 50000
-        use_backend kv-masters
+        use_backend oa-masters
 
-backend kv-masters
+backend oa-masters
         mode  tcp
         option log-health-checks
         option redispatch
@@ -67,7 +67,7 @@ EOF
 
 i=0
 for mips in $MASTER_IPS; do
-  echo "        server kv-master-$i $mips:6443 check" >> /etc/haproxy/haproxy.cfg
+  echo "        server oa-master-$i $mips:6443 check" >> /etc/haproxy/haproxy.cfg
   ((i++))
 done
 

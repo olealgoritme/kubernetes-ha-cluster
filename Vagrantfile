@@ -76,9 +76,9 @@ class KubeCluster
       # p masterIps.length
       # masterIps.each {|s| p s}
 
-      config.vm.define "kv-scaler-#{i}" do |scaler|    
+      config.vm.define "oa-scaler-#{i}" do |scaler|    
         scaler.vm.box = BOX_IMAGE
-        scaler.vm.hostname = "kv-scaler-#{i}"
+        scaler.vm.hostname = "oa-scaler-#{i}"
         scaler.vm.network :private_network, ip: scalerIp
         scaler.vm.network "forwarded_port", guest: 6443, host: 6443
 
@@ -88,8 +88,8 @@ class KubeCluster
         end
        
         $script = <<-SCRIPT
-          echo "# Added by OA" > /vagrant/shared/hosts.out
-          echo "#{scalerIp} kv-scaler.lab.local kv-scaler.local kv-master" >> /vagrant/shared/hosts.out
+          echo "# Added by OA" > /vagrant/hosts.out
+          echo "#{scalerIp} oa-scaler.lab.local kv-scaler.local kv-master" >> /vagrant/hosts.out
           mkdir -p /home/vagrant/scripts
           wget -q #{SCALER_SCRIPT} -O /home/vagrant/scripts/scaler.sh
           chmod +x /home/vagrant/scripts/scaler.sh
@@ -105,9 +105,9 @@ class KubeCluster
       masterIp = self.defineIp("master",i,CLUSTER_NETWORK)
 
       p "The Master #{i} Ip is #{masterIp}"
-      config.vm.define "kv-master-#{i}" do |master|
+      config.vm.define "oa-master-#{i}" do |master|
         master.vm.box = BOX_IMAGE
-        master.vm.hostname = "kv-master-#{i}"
+        master.vm.hostname = "oa-master-#{i}"
         master.vm.network :private_network, ip: masterIp
         
         $script = ""
@@ -115,8 +115,8 @@ class KubeCluster
         if MASTER_COUNT == 1
           master.vm.network "forwarded_port", guest: 6443, host: 6443
           $script = <<-SCRIPT
-            echo "# Added by OA" > /vagrant/shared/hosts.out
-            echo "#{masterIp} kv-master.lab.local kv-master.local kv-master" >> /vagrant/shared/hosts.out
+            echo "# Added by OA" > /vagrant/hosts.out
+            echo "#{masterIp} oa-master.lab.local kv-master.local kv-master" >> /vagrant/hosts.out
           SCRIPT
         end
 
@@ -142,9 +142,9 @@ class KubeCluster
 
       p "The Worker #{i} Ip is #{workerIp}"
 
-      config.vm.define "kv-worker-#{i}" do |worker|
+      config.vm.define "oa-worker-#{i}" do |worker|
         worker.vm.box = BOX_IMAGE
-        worker.vm.hostname = "kv-worker-#{i}"
+        worker.vm.hostname = "oa-worker-#{i}"
         worker.vm.network :private_network, ip: workerIp
 
         worker.vm.provider :libvirt do |libvirt|
