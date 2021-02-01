@@ -71,14 +71,6 @@ for mips in $MASTER_IPS; do
   ((i++))
 done
 
-# echo "#Added by OA" > /vagrant/shared/hosts.out
-# echo "$SCALER_IP     kv-scaler.lab.local     kv-scaler.local     kv-scaler" >> /vagrant/shared/hosts.out
-
-#cat > /vagrant/shared/hosts.out<<EOF
-# Added by OA
-#$SCALER_IP     kv-scaler.lab.local     kv-scaler.local     kv-scaler
-#EOF
-
-cat /vagrant/shared/hosts.out >> /etc/hosts
+cat /vagrant/hosts.out >> /etc/hosts
 
 systemctl restart haproxy

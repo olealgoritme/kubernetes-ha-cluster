@@ -88,8 +88,8 @@ class KubeCluster
         end
        
         $script = <<-SCRIPT
-          echo "# Added by OA" > shared/hosts.out
-          echo "#{scalerIp} kv-scaler.lab.local kv-scaler.local kv-master" >> shared/hosts.out
+          echo "# Added by OA" > /vagrant/shared/hosts.out
+          echo "#{scalerIp} kv-scaler.lab.local kv-scaler.local kv-master" >> /vagrant/shared/hosts.out
           mkdir -p /home/vagrant/scripts
           wget -q #{SCALER_SCRIPT} -O /home/vagrant/scripts/scaler.sh
           chmod +x /home/vagrant/scripts/scaler.sh
@@ -115,8 +115,8 @@ class KubeCluster
         if MASTER_COUNT == 1
           master.vm.network "forwarded_port", guest: 6443, host: 6443
           $script = <<-SCRIPT
-            echo "# Added by OA" > shared/hosts.out
-            echo "#{masterIp} kv-master.lab.local kv-master.local kv-master" >> shared/hosts.out
+            echo "# Added by OA" > /vagrant/shared/hosts.out
+            echo "#{masterIp} kv-master.lab.local kv-master.local kv-master" >> /vagrant/shared/hosts.out
           SCRIPT
         end
 

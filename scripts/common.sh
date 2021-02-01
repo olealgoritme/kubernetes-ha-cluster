@@ -29,7 +29,7 @@ apt-get update
 
 apt-get install -y nfs-kernel-server nfs-common avahi-daemon libnss-mdns traceroute htop httpie bash-completion ruby docker-ce kubeadm kubelet kubectl
 
-cat /vagrant/shared/hosts.out >> /etc/hosts
+cat /vagrant/hosts.out >> /etc/hosts
 
 # Setup Docker daemon
 cat > /etc/docker/daemon.json <<EOF

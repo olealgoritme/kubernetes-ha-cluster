@@ -9,9 +9,9 @@ WORKER_IP=$3
 MASTER_TYPE=$4
 
 if [ $MASTER_TYPE = "single" ]; then
-    $(cat /vagrant/shared/kubeadm-init.out | grep -A 2 "kubeadm join" | sed -e 's/^[ \t]*//' | tr '\n' ' ' | sed -e 's/ \\ / /g')
+    $(cat /vagrant/kubeadm-init.out | grep -A 2 "kubeadm join" | sed -e 's/^[ \t]*//' | tr '\n' ' ' | sed -e 's/ \\ / /g')
 else
-    $(cat /vagrant/shared/workers-join.out | sed -e 's/^[ \t]*//' | tr '\n' ' ' | sed -e 's/ \\ / /g')
+    $(cat /vagrant/workers-join.out | sed -e 's/^[ \t]*//' | tr '\n' ' ' | sed -e 's/ \\ / /g')
 fi
 
 echo KUBELET_EXTRA_ARGS=--node-ip=$WORKER_IP > /etc/default/kubelet

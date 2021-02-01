@@ -13,11 +13,11 @@ sed "s+192.168.0.0/16+$POD_CIDR+g" /tmp/calico-default.yaml > /tmp/calico-define
 
 if [ $MASTER_TYPE = "single" ]; then
 
-    kubeadm init --pod-network-cidr $POD_CIDR --apiserver-advertise-address $MASTER_IP --apiserver-cert-extra-sans kv-master.lab.local --apiserver-cert-extra-sans kv-scaler.lab.local | tee /vagrant/shared/kubeadm-init.out
+    kubeadm init --pod-network-cidr $POD_CIDR --apiserver-advertise-address $MASTER_IP --apiserver-cert-extra-sans kv-master.lab.local --apiserver-cert-extra-sans kv-scaler.lab.local | tee /vagrant/kubeadm-init.out
 
     k=$(grep -n "kubeadm join $MASTER_IP" /vagrant/kubeadm-init.out | cut -f1 -d:)
     x=$(echo $k | awk '{print $1}')
-    awk -v ln=$x 'NR>=ln && NR<=ln+1' /vagrant/shared/kubeadm-init.out | tee /vagrant/shared/workers-join.out
+    awk -v ln=$x 'NR>=ln && NR<=ln+1' /vagrant/kubeadm-init.out | tee /vagrant/workers-join.out
 
 else
 
@@ -29,8 +29,8 @@ else
 
         k=$(grep -n "kubeadm join kv-scaler.lab.local" /vagrant/kubeadm-init.out | cut -f1 -d:)
         x=$(echo $k | awk '{print $1}')
-        awk -v ln=$x 'NR>=ln && NR<=ln+2' /vagrant/shared/kubeadm-init.out | tee /vagrant/shared/masters-join.out
-        awk -v ln=$x 'NR>=ln && NR<=ln+1' /vagrant/shared/kubeadm-init.out | tee /vagrant/shared/workers-join.out
+        awk -v ln=$x 'NR>=ln && NR<=ln+2' /vagrant/kubeadm-init.out | tee /vagrant/masters-join.out
+        awk -v ln=$x 'NR>=ln && NR<=ln+1' /vagrant/kubeadm-init.out | tee /vagrant/workers-join.out
 
     else
         ip route del default
@@ -47,8 +47,8 @@ chown vagrant:vagrant /home/vagrant/.kube/config
 mkdir -p /root/.kube
 cp -i /etc/kubernetes/admin.conf /root/.kube/config
 
-mkdir -p /vagrant/shared/.kube
-cp -i /etc/kubernetes/admin.conf /vagrant/shared/.kube/config
+mkdir -p /vagrant/.kube
+cp -i /etc/kubernetes/admin.conf /vagrant/.kube/config
 
 if (( $NODE == 0 )) ; then
     kubectl apply -f /tmp/calico-defined.yaml
