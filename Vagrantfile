@@ -32,7 +32,7 @@ CLUSTER_NETWORK = "10.8.8.0"
 # IP Range of the intra-pod network
 POD_CIDR = "172.18.0.0/16"
 
-OA_MSG = "Kubernetes HA Cluster"
+OA_MSG = "Kubernetes OA HA Cluster"
 
 COMMON_SCRIPT = "https://raw.githubusercontent.com/olealgoritme/kubernetes-ha-cluster/master/scripts/common.sh"
 SCALER_SCRIPT = "https://raw.githubusercontent.com/olealgoritme/kubernetes-ha-cluster/master/scripts/scaler.sh"
@@ -89,7 +89,7 @@ class KubeCluster
        
         $script = <<-SCRIPT
           echo "# Added by OA" > /vagrant/hosts.out
-          echo "#{scalerIp} oa-scaler.lab.local kv-scaler.local kv-master" >> /vagrant/hosts.out
+          echo "#{scalerIp} oa-scaler.prod.local oa-scaler.local oa-master" >> /vagrant/hosts.out
           mkdir -p /home/vagrant/scripts
           wget -q #{SCALER_SCRIPT} -O /home/vagrant/scripts/scaler.sh
           chmod +x /home/vagrant/scripts/scaler.sh
@@ -116,7 +116,7 @@ class KubeCluster
           master.vm.network "forwarded_port", guest: 6443, host: 6443
           $script = <<-SCRIPT
             echo "# Added by OA" > /vagrant/hosts.out
-            echo "#{masterIp} oa-master.lab.local kv-master.local kv-master" >> /vagrant/hosts.out
+            echo "#{masterIp} oa-master.prod.local oa-master.local oa-master" >> /vagrant/hosts.out
           SCRIPT
         end
 
