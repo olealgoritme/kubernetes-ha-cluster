@@ -15,14 +15,14 @@ apt-get install -y apt-transport-https ca-certificates curl software-properties-
 ### Add Kubernetes GPG key
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 
-### Kubernetes Repo (NO OFFICIAL FOCAL RELEASE YET, USING DEBIAN XENIAL)
+### Kubernetes Repo 
 add-apt-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
 
 ### Add Docker’s official GPG key
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 
-### Add Docker apt repository FOR UBUNTU SERVER 20.04 (focal)
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+### Add Docker apt repository 
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
 
 ### Refresh apt cache
 apt-get update

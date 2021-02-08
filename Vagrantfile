@@ -8,7 +8,7 @@
 # dependencies: 
 #
 # author: Ole Algoritme (C) 2020
-BOX_IMAGE = "generic/ubuntu2004"
+BOX_IMAGE = "generic/ubuntu1604"
 
 # Cluster Privisioning (2 or more masters = HA)
 MASTER_COUNT = 2
